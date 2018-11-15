@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
-#include "cantcoap.h"
+#include "cantcoap/cantcoap.h"
 #include <arpa/inet.h>
 
 #include "CUnit/Basic.h"
 
-#include "dbg.h"
+#include "cantcoap/dbg.h"
 
 void testHeaderFirstByteConstruction();
 void testMethodCodes();

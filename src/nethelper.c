@@ -10,7 +10,7 @@
 #include <errno.h>
 #include <sys/time.h>
 #include <math.h>
-#include "nethelper.h"
+#include "cantcoap/nethelper.h"
 
 
 #define INFO(...) printf(__VA_ARGS__); printf("\r\n")

@@ -37,9 +37,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdint.h>
 #include <unistd.h>
 #include <string.h>
-#include "cantcoap.h"
+#include "cantcoap/cantcoap.h"
 #include "arpa/inet.h"
-#include "sysdep.h"
+#include "cantcoap/sysdep.h"
 
 /// Memory-managed constructor. Buffer for PDU is dynamically sized and allocated by the object.
 /**
