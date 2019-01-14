@@ -23,7 +23,6 @@ set(cantcoap_INCLUDE_DIRECTORIES
     include
 )       
 
-
 include_directories(${cantcoap_INCLUDE_DIRECTORIES} ${catkin_INCLUDE_DIRS})
 
 if(catkin_FOUND)
@@ -36,7 +35,7 @@ endif(catkin_FOUND)
 
 add_library(cantcoap
         src/cantcoap.cpp
-	src/nethelper.c
+	    src/nethelper.c
 )
 
 

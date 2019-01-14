@@ -93,7 +93,7 @@ There are a couple of different ways to construct a PDU depending on whether you
 
 ### Using a managed object
 
-The simplest usage scenario hands control of memory allocation to the library:
+````The simplest usage scenario hands control of memory allocation to the library:
 
 ~~~{.cpp}
 CoapPDU *pdu = new CoapPDU();

@@ -10,16 +10,16 @@ CXXFLAGS=-Wall -std=c++11
 
 default: nethelper.o staticlib test
 
-test: test.cpp libcantcoap.a
+test: /../cantcoap/src/test.cpp libcantcoap.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< -o $@ -lcantcoap $(TEST_LIBS)
 
-cantcoap.o: cantcoap.cpp cantcoap.h
+cantcoap.o: src/cantcoap.cpp include/cantcoap/cantcoap.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $< -c -o $@
 
-nethelper.o: nethelper.c nethelper.h
+nethelper.o: nethelper.c  include/cantcoap/nethelper.h
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -c -o $@
 
-staticlib: libcantcoap.a
+staticlib: /../libcantcoap.a
 
 libcantcoap.a: cantcoap.o
 	$(AR) $(ARFLAGS) libcantcoap.a $^

@@ -37,9 +37,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdint.h>
 #include <unistd.h>
 #include <string.h>
-#include "cantcoap/cantcoap.h"
+#include "../include/cantcoap/cantcoap.h"
 #include "arpa/inet.h"
-#include "cantcoap/sysdep.h"
+#include "../include/cantcoap/sysdep.h"
 
 /// Memory-managed constructor. Buffer for PDU is dynamically sized and allocated by the object.
 /**
@@ -1758,8 +1758,11 @@ void CoapPDU::printHuman() {
 
 	// print payload
 	if(_payloadLength==0) {
+
 		INFO("No payload.");
+
 	} else {
+
 		INFO("Payload of %d bytes",_payloadLength);
 		INFOX("   Value: \"");
 		for(int j=0; j<_payloadLength; j++) {

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
-#include "cantcoap/cantcoap.h"
+#include "../include/cantcoap/cantcoap.h"
 #include <arpa/inet.h>
 
 #include "CUnit/Basic.h"
