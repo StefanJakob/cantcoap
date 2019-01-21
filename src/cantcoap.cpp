@@ -135,7 +135,7 @@ CoapPDU::CoapPDU(uint8_t *pdu, int pduLength) : CoapPDU(pdu,pduLength,pduLength)
 CoapPDU::CoapPDU(uint8_t *buffer, int bufferLength, int pduLength) {
 	// sanity
 	if(pduLength<4&&pduLength!=0) {
-		DBG("PDU cannot have a length less than 4");
+//		DBG("PDU cannot have a length less than 4");
 	}
 
 	// pdu
@@ -210,7 +210,7 @@ int CoapPDU::reset() {
  */
 int CoapPDU::validate() {
 	if(_pduLength<4) {
-		DBG("PDU has to be a minimum of 4 bytes. This: %d bytes",_pduLength);
+//		DBG("PDU has to be a minimum of 4 bytes. This: %d bytes",_pduLength);
 		return 0;
 	}
 
@@ -230,22 +230,22 @@ int CoapPDU::validate() {
 	// version must be 1
 	int version = getVersion();
 	if (version != 1) {
-		DBG("Invalid version: %d", version);
+//		DBG("Invalid version: %d", version);
 		return 0;
 	}
-	DBG("Version: %d", version);
-	DBG("Type: %d", getType());
+//	DBG("Version: %d", version);
+//	DBG("Type: %d", getType());
 
 	// token length must be between 0 and 8
 	int tokenLength = getTokenLength();
 	if(tokenLength<0||tokenLength>8) {
-		DBG("Invalid token length: %d",tokenLength);
+//		DBG("Invalid token length: %d",tokenLength);
 		return 0;
 	}
-	DBG("Token length: %d",tokenLength);
+//	DBG("Token length: %d",tokenLength);
 	// check total length
 	if((COAP_HDR_SIZE+tokenLength)>_pduLength) {
-		DBG("Token length would make pdu longer than actual length.");
+//		DBG("Token length would make pdu longer than actual length.");
 		return 0;
 	}
 
@@ -258,10 +258,10 @@ int CoapPDU::validate() {
 		(code==0x8E) ||
 		(code>COAP_UNSUPPORTED_CONTENT_FORMAT&&code<COAP_INTERNAL_SERVER_ERROR) ||
 		(code>COAP_PROXYING_NOT_SUPPORTED) ) {
-		DBG("Invalid CoAP code: %d",code);
+//		DBG("Invalid CoAP code: %d",code);
 		return 0;
 	}
-	DBG("CoAP code: %d",code);
+//	DBG("CoAP code: %d",code);
 
 	// token can be anything so nothing to check
 
@@ -274,7 +274,7 @@ int CoapPDU::validate() {
 
 	// may be 0 options
 	if(optionPos==_pduLength) {
-		DBG("No options. No payload.");
+//		DBG("No options. No payload.");
 		_numOptions = 0;
 		_payloadLength = 0;
 		return 1;
@@ -295,13 +295,13 @@ int CoapPDU::validate() {
 					_payloadPointer = &_pdu[optionPos+1];
 					_payloadLength = (bytesRemaining-1);
 					_numOptions = numOptions;
-					DBG("Payload found, length: %d",_payloadLength);
+//					DBG("Payload found, length: %d",_payloadLength);
 					return 1;
 				}
 				// payload marker but no payload
 				_payloadPointer = NULL;
 				_payloadLength = 0;
-				DBG("Payload marker but no payload.");
+//				DBG("Payload marker but no payload.");
 				return 0;
 			}
 
@@ -309,12 +309,12 @@ int CoapPDU::validate() {
 			upperNibble = (optionHeader & 0xF0) >> 4;
 			lowerNibble = (optionHeader & 0x0F);
 			if(upperNibble==0x0F||lowerNibble==0x0F) {
-				DBG("Expected option header or payload marker, got: 0x%x%x",upperNibble,lowerNibble);
+//				DBG("Expected option header or payload marker, got: 0x%x%x",upperNibble,lowerNibble);
 				return 0;
 			}
-			DBG("Option header byte appears sane: 0x%x%x",upperNibble,lowerNibble);
+//			DBG("Option header byte appears sane: 0x%x%x",upperNibble,lowerNibble);
 		} else {
-			DBG("No more data. No payload.");
+//			DBG("No more data. No payload.");
 			_payloadPointer = NULL;
 			_payloadLength = 0;
 			_numOptions = numOptions;
@@ -326,24 +326,24 @@ int CoapPDU::validate() {
 
 		// check that there is enough space for the extended delta and length bytes (if any)
 		int headerBytesNeeded = computeExtraBytes(upperNibble);
-		DBG("%d extra bytes needed for extended delta",headerBytesNeeded);
+//		DBG("%d extra bytes needed for extended delta",headerBytesNeeded);
 		if(headerBytesNeeded>bytesRemaining) {
-			DBG("Not enough space for extended option delta, needed %d, have %d.",headerBytesNeeded,bytesRemaining);
+//			DBG("Not enough space for extended option delta, needed %d, have %d.",headerBytesNeeded,bytesRemaining);
 			return 0;
 		}
 		headerBytesNeeded += computeExtraBytes(lowerNibble);
 		if(headerBytesNeeded>bytesRemaining) {
-			DBG("Not enough space for extended option length, needed %d, have %d.",
+//			DBG("Not enough space for extended option length, needed %d, have %d.",
 				(headerBytesNeeded-computeExtraBytes(upperNibble)),bytesRemaining);
 			return 0;
 		}
-		DBG("Enough space for extended delta and length: %d, continuing.",headerBytesNeeded);
+//		DBG("Enough space for extended delta and length: %d, continuing.",headerBytesNeeded);
 
 		// extract option details
 		optionDelta = getOptionDelta(&_pdu[optionPos]);
 		optionNumber += optionDelta;
 		optionValueLength = getOptionValueLength(&_pdu[optionPos]);
-		DBG("Got option: %d with length %d",optionNumber,optionValueLength);
+//		DBG("Got option: %d with length %d",optionNumber,optionValueLength);
 		// compute total length
 		totalLength = 1; // mandatory header
 		totalLength += computeExtraBytes(optionDelta);
@@ -351,10 +351,10 @@ int CoapPDU::validate() {
 		totalLength += optionValueLength;
 		// check there is enough space
 		if(optionPos+totalLength>_pduLength) {
-			DBG("Not enough space for option payload, needed %d, have %d.",(totalLength-headerBytesNeeded-1),_pduLength-optionPos);
+//			DBG("Not enough space for option payload, needed %d, have %d.",(totalLength-headerBytesNeeded-1),_pduLength-optionPos);
 			return 0;
 		}
-		DBG("Enough space for option payload: %d %d",optionValueLength,(totalLength-headerBytesNeeded-1));
+//		DBG("Enough space for option payload: %d %d",optionValueLength,(totalLength-headerBytesNeeded-1));
 
 		// recompute bytesRemaining
 		bytesRemaining -= totalLength;
@@ -445,7 +445,7 @@ int CoapPDU::setURI(char *uri, int urilen) {
 
 	// sanitation
 	if(urilen<=0||uri==NULL) {
-		DBG("Null or zero-length uri passed.");
+//		DBG("Null or zero-length uri passed.");
 		return 1;
 	}
 
@@ -473,7 +473,7 @@ int CoapPDU::setURI(char *uri, int urilen) {
 
 		// ignore leading slash
 		if(*startP==splitChar) {
-			DBG("Skipping leading slash");
+//			DBG("Skipping leading slash");
 			startP++;
 		}
 
@@ -482,7 +482,7 @@ int CoapPDU::setURI(char *uri, int urilen) {
 
 		// might not be another slash
 		if(endP==NULL) {
-			DBG("Ending out of slash");
+//			DBG("Ending out of slash");
 			// check if there is a ?
 			endP = strchr(startP,'?');
 			// done if no queries
@@ -500,13 +500,13 @@ int CoapPDU::setURI(char *uri, int urilen) {
 		char *b = (char*)malloc(oLen+1);
 		memcpy(b,startP,oLen);
 		b[oLen] = 0x00;
-		DBG("Adding URI_PATH %s",b);
+//		DBG("Adding URI_PATH %s",b);
 		free(b);
 		#endif
 
 		// add option
 		if(addOption(optionType,oLen,(uint8_t*)startP)!=0) {
-			DBG("Error adding option");
+//			DBG("Error adding option");
 			return 1;
 		}
 		startP = endP;
@@ -548,12 +548,12 @@ int CoapPDU::addURIQuery(char *query) {
  */
 int CoapPDU::getURI(char *dst, int dstlen, int *outLen) {
 	if(outLen==NULL) {
-		DBG("Output length pointer is NULL");
+//		DBG("Output length pointer is NULL");
 		return 1;
 	}
 
 	if(dst==NULL) {
-		DBG("NULL destination buffer");
+//		DBG("NULL destination buffer");
 		*outLen = 0;
 		return 1;
 	}
@@ -562,7 +562,7 @@ int CoapPDU::getURI(char *dst, int dstlen, int *outLen) {
 	if(dstlen<=0) {
 		*dst = 0x00;
 		*outLen = 0;
-		DBG("Destination buffer too small (0)!");
+//		DBG("Destination buffer too small (0)!");
 		return 1;
 	}
 	// check option count
@@ -588,7 +588,7 @@ int CoapPDU::getURI(char *dst, int dstlen, int *outLen) {
 		dst++;
 		bytesLeft--;
 	} else {
-		DBG("No space for initial slash needed 1, got %d",bytesLeft);
+//		DBG("No space for initial slash needed 1, got %d",bytesLeft);
 		free(options);
 		return 1;
 	}
@@ -612,7 +612,7 @@ int CoapPDU::getURI(char *dst, int dstlen, int *outLen) {
 
 			// check space
 			if(oLen>bytesLeft) {
-				DBG("Destination buffer too small, needed %d, got %d",oLen,bytesLeft);
+//				DBG("Destination buffer too small, needed %d, got %d",oLen,bytesLeft);
 				free(options);
 				return 1;
 			}
@@ -638,7 +638,7 @@ int CoapPDU::getURI(char *dst, int dstlen, int *outLen) {
 				dst++;
 				bytesLeft--;
 			} else {
-				DBG("Ran out of space after processing option");
+//				DBG("Ran out of space after processing option");
 				free(options);
 				return 1;
 			}
@@ -732,14 +732,14 @@ uint8_t* CoapPDU::getTokenPointer() {
  * \return 0 on success, 1 on failure.
  */
 int CoapPDU::setToken(uint8_t *token, uint8_t tokenLength) {
-	DBG("Setting token");
+//	DBG("Setting token");
 	if(token==NULL) {
-		DBG("NULL pointer passed as token reference");
+//		DBG("NULL pointer passed as token reference");
 		return 1;
 	}
 
 	if(tokenLength==0) {
-		DBG("Token has zero length");
+//		DBG("Token has zero length");
 		return 1;
 	}
 
@@ -989,7 +989,7 @@ int CoapPDU::addOption(uint16_t insertedOptionNumber, uint16_t optionValueLength
 	// find insertion location and previous option number
 	uint16_t prevOptionNumber = 0; // option number of option before insertion point
 	int insertionPosition = findInsertionPosition(insertedOptionNumber,&prevOptionNumber);
-	DBG("inserting option at position %d, after option with number: %hu",insertionPosition,prevOptionNumber);
+//	DBG("inserting option at position %d, after option with number: %hu",insertionPosition,prevOptionNumber);
 
 	// compute option delta length
 	uint16_t optionDelta = insertedOptionNumber-prevOptionNumber;
@@ -1128,7 +1128,7 @@ int CoapPDU::addOption(uint16_t insertedOptionNumber, uint16_t optionValueLength
  * \return Either a pointer to the payload buffer, or NULL if there wasn't enough space / allocation failed.
  */
 uint8_t* CoapPDU::mallocPayload(int len) {
-	DBG("Entering mallocPayload");
+//	DBG("Entering mallocPayload");
 	// sanity checks
 	if(len==0) {
 		DBG("Cannot allocate a zero length payload");
@@ -1145,7 +1145,7 @@ uint8_t* CoapPDU::mallocPayload(int len) {
 		return _payloadPointer;
 	}
 
-	DBG("_bufferLength: %d, _pduLength: %d, _payloadLength: %d",_bufferLength,_pduLength,_payloadLength);
+//	DBG("_bufferLength: %d, _pduLength: %d, _payloadLength: %d",_bufferLength,_pduLength,_payloadLength);
 
 	// might be making payload bigger (including bigger than 0) or smaller
 	int markerSpace = 1;
@@ -1309,7 +1309,7 @@ int CoapPDU::setContentFormat(CoapPDU::ContentFormat format) {
  * \param shiftAmount Length of block to move.
  */
 void CoapPDU::shiftPDUUp(int shiftOffset, int shiftAmount) {
-	DBG("shiftOffset: %d, shiftAmount: %d",shiftOffset,shiftAmount);
+//	DBG("shiftOffset: %d, shiftAmount: %d",shiftOffset,shiftAmount);
 	int destPointer = _pduLength-1;
 	int srcPointer  = destPointer-shiftOffset;
 	while(shiftAmount--) {
@@ -1404,7 +1404,7 @@ int CoapPDU::findInsertionPosition(uint16_t optionNumber, uint16_t *prevOptionNu
 	// zero this for safety
 	*prevOptionNumber = 0x00;
 
-	DBG("_pduLength: %d",_pduLength);
+//	DBG("_pduLength: %d",_pduLength);
 
 	// if option is bigger than any currently stored, it goes at the end
 	// this includes the case that no option has yet been added
