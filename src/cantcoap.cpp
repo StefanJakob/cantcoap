@@ -334,7 +334,7 @@ int CoapPDU::validate() {
 		headerBytesNeeded += computeExtraBytes(lowerNibble);
 		if(headerBytesNeeded>bytesRemaining) {
 //			DBG("Not enough space for extended option length, needed %d, have %d.",
-				(headerBytesNeeded-computeExtraBytes(upperNibble)),bytesRemaining);
+//				(headerBytesNeeded-computeExtraBytes(upperNibble)),bytesRemaining);
 			return 0;
 		}
 //		DBG("Enough space for extended delta and length: %d, continuing.",headerBytesNeeded);
@@ -1003,7 +1003,7 @@ int CoapPDU::addOption(uint16_t insertedOptionNumber, uint16_t optionValueLength
 
 	// if this is at the end of the PDU, job is done, just malloc and insert
 	if(insertionPosition==_pduLength) {
-		DBG("Inserting at end of PDU");
+//		DBG("Inserting at end of PDU");
 		// optionNumber must be biggest added
 		_maxAddedOptionNumber = insertedOptionNumber;
 
