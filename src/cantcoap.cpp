@@ -926,7 +926,7 @@ int CoapPDU::getNumOptions() {
  * This returns the options as a sequence of structs.
  */
 CoapPDU::CoapOption* CoapPDU::getOptions() {
-	DBG("getOptions() called, %d options.",_numOptions);
+//	DBG("getOptions() called, %d options.",_numOptions);
 
 	uint16_t optionDelta =0, optionNumber = 0, optionValueLength = 0;
 	int totalLength = 0;
