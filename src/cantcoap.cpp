@@ -763,7 +763,7 @@ int CoapPDU::setToken(uint8_t *token, uint8_t tokenLength) {
 			uint8_t *newMemory = (uint8_t*)realloc(_pdu,_pduLength);
 			if(newMemory==NULL) {
 				// malloc failed
-				DBG("Failed to allocate memory for token");
+				// DBG("Failed to allocate memory for token");
 				_pduLength = oldPDULength;
 				return 1;
 			}
@@ -772,7 +772,7 @@ int CoapPDU::setToken(uint8_t *token, uint8_t tokenLength) {
 		} else {
 			// constructed from buffer, check space
 			if(_pduLength>_bufferLength) {
-				DBG("Buffer too small to contain token, needed %d, got %d.",_pduLength-oldPDULength,_bufferLength-oldPDULength);
+				// DBG("Buffer too small to contain token, needed %d, got %d.",_pduLength-oldPDULength,_bufferLength-oldPDULength);
 				_pduLength = oldPDULength;
 				return 1;
 			}
@@ -938,7 +938,7 @@ CoapPDU::CoapOption* CoapPDU::getOptions() {
 	// malloc space for options
 	CoapOption *options = (CoapOption*)malloc(_numOptions*sizeof(CoapOption));
 	if(options==NULL) {
-		DBG("Failed to allocate memory for options.");
+		//DBG("Failed to allocate memory for options.");
 		return NULL;
 	}
 
@@ -1013,7 +1013,7 @@ int CoapPDU::addOption(uint16_t insertedOptionNumber, uint16_t optionValueLength
 		if(!_constructedFromBuffer) {
 			uint8_t *newMemory = (uint8_t*)realloc(_pdu,_pduLength);
 			if(newMemory==NULL) {
-				DBG("Failed to allocate memory for option.");
+				//DBG("Failed to allocate memory for option.");
 				_pduLength = oldPDULength;
 				// malloc failed
 				return 1;
@@ -1023,7 +1023,7 @@ int CoapPDU::addOption(uint16_t insertedOptionNumber, uint16_t optionValueLength
 		} else {
 			// constructed from buffer, check space
 			if(_pduLength>_bufferLength) {
-				DBG("Buffer too small for new option: needed %d, got %d.",_pduLength-oldPDULength,_bufferLength-oldPDULength);
+				//DBG("Buffer too small for new option: needed %d, got %d.",_pduLength-oldPDULength,_bufferLength-oldPDULength);
 				_pduLength = oldPDULength;
 				return 1;
 			}
@@ -1042,17 +1042,17 @@ int CoapPDU::addOption(uint16_t insertedOptionNumber, uint16_t optionValueLength
 	int nextOptionDelta = getOptionDelta(&_pdu[insertionPosition]);
 	int nextOptionNumber = prevOptionNumber + nextOptionDelta;
 	int nextOptionDeltaBytes = computeExtraBytes(nextOptionDelta);
-	DBG("nextOptionDeltaBytes: %d",nextOptionDeltaBytes);
+	//DBG("nextOptionDeltaBytes: %d",nextOptionDeltaBytes);
 	// recompute option delta, relative to inserted option
 	int newNextOptionDelta = nextOptionNumber-insertedOptionNumber;
 	int newNextOptionDeltaBytes = computeExtraBytes(newNextOptionDelta);
-	DBG("newNextOptionDeltaBytes: %d",newNextOptionDeltaBytes);
+	//DBG("newNextOptionDeltaBytes: %d",newNextOptionDeltaBytes);
 	// determine adjustment
 	int optionDeltaAdjustment = newNextOptionDeltaBytes-nextOptionDeltaBytes;
 
 	// create space for new option, including adjustment space for option delta
-	DBG_PDU();
-	DBG("Creating space");
+	//DBG_PDU();
+	//DBG("Creating space");
 	int mallocLength = optionLength+optionDeltaAdjustment;
 	int oldPDULength = _pduLength;
 	_pduLength += mallocLength;
@@ -1069,17 +1069,17 @@ int CoapPDU::addOption(uint16_t insertedOptionNumber, uint16_t optionValueLength
 	} else {
 		// constructed from buffer, check space
 		if(_pduLength>_bufferLength) {
-			DBG("Buffer too small to contain option, needed %d, got %d.",_pduLength-oldPDULength,_bufferLength-oldPDULength);
+			//DBG("Buffer too small to contain option, needed %d, got %d.",_pduLength-oldPDULength,_bufferLength-oldPDULength);
 			_pduLength = oldPDULength;
 			return 1;
 		}
 	}
 
 	// move remainder of PDU data up to create hole for new option
-	DBG_PDU();
-	DBG("Shifting PDU.");
+	//DBG_PDU();
+	//DBG("Shifting PDU.");
 	shiftPDUUp(mallocLength,_pduLength-(insertionPosition+mallocLength));
-	DBG_PDU();
+	//DBG_PDU();
 
 	// adjust option delta bytes of following option
 	// move the option header to the correct position
@@ -1107,10 +1107,10 @@ int CoapPDU::addOption(uint16_t insertedOptionNumber, uint16_t optionValueLength
 	// but I'll leave that little comment in, just to show that it would work even if the delta got bigger
 
 	// now insert the new option into the gap
-	DBGLX("Inserting new option...");
+	//DBGLX("Inserting new option...");
 	insertOption(insertionPosition,optionDelta,optionValueLength,optionValue);
-	DBGX("done\r\n");
-	DBG_PDU();
+	//DBGX("done\r\n");
+	//DBG_PDU();
 
 	// done, mark it with B!
 	_numOptions++;
@@ -1131,13 +1131,13 @@ uint8_t* CoapPDU::mallocPayload(int len) {
 //	DBG("Entering mallocPayload");
 	// sanity checks
 	if(len==0) {
-		DBG("Cannot allocate a zero length payload");
+		//DBG("Cannot allocate a zero length payload");
 		return NULL;
 	}
 
 	// further sanity
 	if(len==_payloadLength) {
-		DBG("Space for payload of specified length already exists");
+		//DBG("Space for payload of specified length already exists");
 		if(_payloadPointer==NULL) {
 			DBG("Garbage PDU. Payload length is %d, but existing _payloadPointer NULL",_payloadLength);
 			return NULL;
@@ -1163,16 +1163,16 @@ uint8_t* CoapPDU::mallocPayload(int len) {
 	if(!_constructedFromBuffer) {
 		uint8_t* newPDU = (uint8_t*)realloc(_pdu,newLen);
 		if(newPDU==NULL) {
-			DBG("Cannot allocate (or shrink) space for payload");
+			//DBG("Cannot allocate (or shrink) space for payload");
 			return NULL;
 		}
 		_pdu = newPDU;
 		_bufferLength = newLen;
 	} else {
 		// constructed from buffer, check space
-		DBG("newLen: %d, _bufferLength: %d",newLen,_bufferLength);
+		//DBG("newLen: %d, _bufferLength: %d",newLen,_bufferLength);
 		if(newLen>_bufferLength) {
-			DBG("Buffer too small to contain desired payload, needed %d, got %d.",newLen-_pduLength,_bufferLength-_pduLength);
+			//DBG("Buffer too small to contain desired payload, needed %d, got %d.",newLen-_pduLength,_bufferLength-_pduLength);
 			return NULL;
 		}
 	}
@@ -1209,13 +1209,13 @@ uint8_t* CoapPDU::mallocPayload(int len) {
  */
 int CoapPDU::setPayload(uint8_t *payload, int len) {
 	if(payload==NULL) {
-		DBG("NULL payload pointer.");
+		//DBG("NULL payload pointer.");
 		return 1;
 	}
 
 	uint8_t *payloadPointer = mallocPayload(len);
 	if(payloadPointer==NULL) {
-		DBG("Allocation of payload failed");
+		//DBG("Allocation of payload failed");
 		return 1;
 	}
 
@@ -1271,7 +1271,7 @@ int CoapPDU::setContentFormat(CoapPDU::ContentFormat format) {
 	if(format==0) {
 		// minimal representation means null option value
 		if(addOption(CoapPDU::COAP_OPTION_CONTENT_FORMAT,0,NULL)!=0) {
-			DBG("Error setting content format");
+			//DBG("Error setting content format");
 			return 1;
 		}
 		return 0;
@@ -1283,7 +1283,7 @@ int CoapPDU::setContentFormat(CoapPDU::ContentFormat format) {
 	if((uint16_t)format <= 0xffu) {
 		c[0] = format;
 		if(addOption(CoapPDU::COAP_OPTION_CONTENT_FORMAT,1,c)!=0) {
-			DBG("Error setting content format");
+			//DBG("Error setting content format");
 			return 1;
 		}
 		return 0;
@@ -1292,7 +1292,7 @@ int CoapPDU::setContentFormat(CoapPDU::ContentFormat format) {
 	uint8_t *to = c;
 	endian_store16(to, format);
 	if(addOption(CoapPDU::COAP_OPTION_CONTENT_FORMAT,2,c)!=0) {
-		DBG("Error setting content format");
+		//DBG("Error setting content format");
 		return 1;
 	}
 	return 0;
@@ -1328,7 +1328,7 @@ void CoapPDU::shiftPDUUp(int shiftOffset, int shiftAmount) {
  * \param shiftAmount Length of block to shift.
  */
 void CoapPDU::shiftPDUDown(int startLocation, int shiftOffset, int shiftAmount) {
-	DBG("startLocation: %d, shiftOffset: %d, shiftAmount: %d",startLocation,shiftOffset,shiftAmount);
+	//DBG("startLocation: %d, shiftOffset: %d, shiftAmount: %d",startLocation,shiftOffset,shiftAmount);
 	int srcPointer = startLocation+shiftOffset;
 	while(shiftAmount--) {
 		_pdu[startLocation] = _pdu[srcPointer];
@@ -1525,7 +1525,7 @@ int CoapPDU::insertOption(
 	} else {
 		_pdu[headerStart] |= 0x0E; // 14 in second nibble
 		// this is in network byte order
-		DBG("optionValueLength: %u",optionValueLength);
+		//DBG("optionValueLength: %u",optionValueLength);
 		uint8_t *to = &_pdu[++insertionPosition];
 		optionValueLength -= 269;
 		endian_store16(to, optionValueLength);

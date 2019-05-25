@@ -77,7 +77,7 @@ int setupAddress(
 		return -1;
 	}
 
-	DBG("Host/Port numeric? %d %d",hostIsNumeric,portIsNumeric);
+	//DBG("Host/Port numeric? %d %d",hostIsNumeric,portIsNumeric);
 
 	// avoid doing respective lookups when either host and port or numeric
 	if(hostIsNumeric) {

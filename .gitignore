@@ -6,3 +6,8 @@ examples/plain/client
 examples/plain/server
 examples/dtls/dtls_server
 examples/dtls/dtls_client
+
+.idea/
+
+cmake-build-debug/
+
